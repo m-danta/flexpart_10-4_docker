@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
 	autoconf libtool automake flex bison \
 	cmake make \
 	python3-dev python3-pip git-core vim \
+	python3-toml \
 	zlib1g \
 	build-essential libhdf5-serial-dev \
 	libnetcdf-dev libnetcdff-dev \
@@ -39,9 +40,14 @@ RUN mkdir flex_src && cd /flex_src \
 	&& git clone https://www.flexpart.eu/gitmob/flexpart --branch dev --single-branch \
 	&& cd flexpart/src \
 	&& cp makefile makefile_local \
-	&& sed -i '74a INCPATH1 = /usr/include\nINCPATH2 = /usr/include\nLIBPATH1 = /usr/lib\nF90 = gfortran' makefile_local \
+	&& sed -i '74a INCPATH1	= /usr/local/include\nINCPATH2	= /usr/include\nLIBPATH1	= /usr/local/lib\nLIBPATH2	= /usr/lib\nF90	= /usr/bin/gfortran' makefile_local \
 	&& sed -i 's/LIBS = -lgrib_api_f90 -lgrib_api -lm -ljasper $(NCOPT)/LIBS = -leccodes_f90 -leccodes -lm -ljasper $(NCOPT)/' makefile_local \
-	&& make -f makefile_local
+	&& sed -i 's/#-L$(LIBPATH2)/-L$(LIBPATH2)/' makefile_local \
+	&& sed -i '148 s/ integer/! integer/' par_mod.f90 \
+	&& sed -i '150 s/! integer/ integer/' par_mod.f90 \
+	&& sed -i '216 s/maxpart=100000/maxpart=1000000/' par_mod.f90 \
+	&& sed -i '217 s/maxspec=6/maxspec=25/' par_mod.f90 \
+	&& make -f makefile_local ncf=yes
 
 ENV PATH /flex_src/flexpart/src/:$PATH
 
