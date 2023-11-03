@@ -1,9 +1,10 @@
 #!/bin/bash
 
-direction=backward
-station=kandy_5000
-startdate=20220604
-enddate=20220605
+direction=$1 #backward
+station=$2 #releases2
+startdate=$3 #20220704
+enddate=$4 #20220705
+
 input=gfs_083.2
 
 dates=(); d=$startdate; until [ $d = $enddate ]; do dates+=($d);

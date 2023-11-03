@@ -61,7 +61,7 @@ def update_COMMAND(source_dir, control_dir, direction, begin_dt, end_dt, out_int
 
     print("COMMAND updated!")
 
-def update_RELEASES(source_dir, control_dir, species, heights, no_part, time, bbox):
+def update_RELEASES(source_dir, control_dir, species, heights, no_part, time, bboxes):
     with open(source_dir+'RELEASES_header_template') as t_file:
         header_temp = t_file.read()
 
@@ -72,19 +72,19 @@ def update_RELEASES(source_dir, control_dir, species, heights, no_part, time, bb
         temp = t_file.read()
     
     t = string.Template(temp)
-
-    for h in heights:
-        c = str((h[0]+h[1])/2.) + 'm ' + str(no_part)
-        RELEASES += t.substitute(begin=time[0].strftime("%Y%m%d %H%M%S"),
-                                 end=time[1].strftime("%Y%m%d %H%M%S"),
-                                 lon_ll='%9.4f' % bbox['lon_ll'],
-                                 lat_ll='%9.4f' % bbox['lat_ll'],
-                                 lon_ur='%9.4f' % bbox['lon_ur'],
-                                 lat_ur='%9.4f' % bbox['lat_ur'],
-                                 lower='%9.3f' % h[0],
-                                 upper='%9.3f' % h[1],
-                                 no_part='%9d' % no_part,
-                                 comment=c)
+    for bbox in bboxes:
+        for h in heights:
+            c = str((h[0]+h[1])/2.) + 'm ' + str(no_part)
+            RELEASES += t.substitute(begin=time[0].strftime("%Y%m%d %H%M%S"),
+                                     end=time[1].strftime("%Y%m%d %H%M%S"),
+                                     lon_ll='%9.4f' % bbox['lon_ll'],
+                                     lat_ll='%9.4f' % bbox['lat_ll'],
+                                     lon_ur='%9.4f' % bbox['lon_ur'],
+                                     lat_ur='%9.4f' % bbox['lat_ur'],
+                                     lower='%9.3f' % h[0],
+                                     upper='%9.3f' % h[1],
+                                     no_part='%9d' % no_part,
+                                     comment=c)
 
     with open(control_dir+'RELEASES', 'w') as file:
         file.write(RELEASES)
@@ -139,25 +139,32 @@ elif args.direction=='backward':
 else:
     raise ValueError
 
-bbox = {'lon_ll': config_file['station']['lon']-0.1, 'lat_ll': config_file['station']['lat']-0.1,
-        'lon_ur': config_file['station']['lon']+0.1, 'lat_ur': config_file['station']['lat']+0.1}
+no_of_releases = len(config_file['station']['lon'])
+bboxes = []
+for release in range(no_of_releases):
+    bboxes = bboxes + [{'lon_ll': config_file['station']['lon'][release]-0.1, 'lat_ll': config_file['station']['lat'][release]-0.1, 
+                        'lon_ur': config_file['station']['lon'][release]+0.1, 'lat_ur': config_file['station']['lat'][release]+0.1}]
+#bboxes = [{'lon_ll': config_file['station']['lon'][0]-0.1, 'lat_ll': config_file['station']['lat'][0]-0.1,
+#           'lon_ur': config_file['station']['lon'][0]+0.1, 'lat_ur': config_file['station']['lat'][0]+0.1},
+#          {'lon_ll': config_file['station']['lon'][1]-0.1, 'lat_ll': config_file['station']['lat'][1]-0.1,
+#           'lon_ur': config_file['station']['lon'][1]+0.1, 'lat_ur': config_file['station']['lat'][1]+0.1}]
 center_heights = list(range(config_file['height']['base'], 
                             config_file['height']['top']+1, 
                             config_file['height']['interval']))
-plusminus_height = config_file['height']['rel_pm_height']
+plusminus_height = config_file['release']['rel_pm_height']
 heights = [(h-plusminus_height, h+plusminus_height) for h in center_heights]
 if args.direction=='forward':
     time = [datetime.datetime.strptime(dt, "%Y%m%d"),
-            datetime.datetime.strptime(dt, "%Y%m%d")+datetime.timedelta(minutes=config_file['time']['rel_after_minutes'])]
+            datetime.datetime.strptime(dt, "%Y%m%d")+datetime.timedelta(minutes=config_file['release']['rel_after_minutes'])]
 elif args.direction=='backward':
-    time = [datetime.datetime.strptime(dt, "%Y%m%d")-datetime.timedelta(minutes=config_file['time']['rel_after_minutes']),
+    time = [datetime.datetime.strptime(dt, "%Y%m%d")-datetime.timedelta(minutes=config_file['release']['rel_after_minutes']),
             datetime.datetime.strptime(dt, "%Y%m%d")]
 
 update_RELEASES(source_dir, control_dir, 
-                species=config_file['height']['species_no'], 
+                species=config_file['release']['species_no'], 
                 heights=heights, 
-                no_part=config_file['height']['no_particles'], 
-                time=time, bbox=bbox)
+                no_part=config_file['release']['no_particles'], 
+                time=time, bboxes=bboxes)
 
 process = subprocess.run('./src/FLEXPART', shell=True, check=True,
                          stdout=subprocess.PIPE, universal_newlines=True)

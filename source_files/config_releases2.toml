@@ -1,5 +1,5 @@
 [time]
-	tr_duration = 24 #Duration of each trajectory (Hours)
+	tr_duration = 360 #360 #Duration of each trajectory (Hours)
 	outstep = 21600 #(Seconds)
 
 [release]
@@ -17,7 +17,7 @@
 	#reception = ['md', '2.0', '5.0']
 
 [station]
-	name = 'kandy_5000'
-	lat = [7.291]
-	lon = [80.637]
-	altitude = [500]
+	name = 'releases2'
+	lat = [7.291, 0.135]
+	lon = [80.637, 80.637]
+	altitude = [500, 0]
