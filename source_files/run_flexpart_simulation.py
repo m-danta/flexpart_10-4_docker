@@ -110,11 +110,13 @@ mount_dir = '/home/muditha/0_Research/FLEXPART/flexpart_10-4_docker/'
 input_dir = mount_dir+'data/'+args.input+'/'
 source_dir = mount_dir+'source_files/'
 
-config_file = toml.load(source_dir+'config_{}.toml'.format(args.station))
-
 dt = args.date
 output_dir = mount_dir+'output_files/{}/{}_{}/'.format(args.station, datetime.datetime.strptime(dt, "%Y%m%d").strftime("%Y%m%d_%H"), args.direction)
 print('output_dir: ', output_dir)
+
+shutil.copyfile(r"{}config_{}.toml".format(source_dir, args.station), 
+                r"{}config_{}.toml".format(output_dir, args.station))
+config_file = toml.load("{}config_{}.toml".format(output_dir, args.station))
 
 if os.path.isdir(output_dir):
     shutil.rmtree(output_dir)
