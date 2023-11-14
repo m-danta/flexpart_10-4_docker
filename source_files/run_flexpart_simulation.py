@@ -57,7 +57,7 @@ def update_COMMAND(source_dir, control_dir, direction, begin_dt, end_dt, out_int
                            end_date=end.strftime("%Y%m%d"),
                            end_time=end.strftime("%H%M%S"),
                            out_interval='{:.0f}'.format(out_interval),
-                           domian_filling=domain_filling)
+                           domain_filling=domain_filling)
 
     with open(control_dir+'COMMAND', 'w') as file:
         file.write(COMMAND)
