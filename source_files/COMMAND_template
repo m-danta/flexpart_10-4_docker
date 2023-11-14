@@ -1,5 +1,5 @@
 &COMMAND
- LDIRECT= ${direction},		 ! Simulation direction in time;	1 (forward) or -1 (backward)
+ LDIRECT=${direction},		 ! Simulation direction in time;	1 (forward) or -1 (backward)
  IBDATE=${begin_date},		 ! Start date of the simulation;	YYYYMMDD: YYYY=year, MM=month, DD=day  
  IBTIME=${begin_time},		 ! Start time of the simulation;	HHMISS: HH=hours, MI=min, SS=sec; UTC
  IEDATE=${end_date},		 ! End date of the simulation;		same format as IBDATE 
@@ -24,7 +24,7 @@
  IPIN=0,			 ! Warm start from particle dump (needs previous partposit_end file);	0]no 1]yes  
  IOUTPUTFOREACHRELEASE=1,	 ! Separate output fields for each location in the RELEASE file;	0]no 1]yes 
  IFLUX=0,			 ! Output of mass fluxes through output grid box boundaries
- MDOMAINFILL=0,			 ! Switch for domain-filling, if limited-area particles generated at boundary
+ MDOMAINFILL=${domain_filling},	 ! Switch for domain-filling, if limited-area particles generated at boundary
  IND_SOURCE=1,			 ! Unit to be used at the source;  				1]mass 2]mass mixing ratio 
  IND_RECEPTOR=1,		 ! Unit to be used at the receptor; 				1]mass 2]mass mixing ratio 3]wet depo. 4]dry depo.
  MQUASILAG=0,			 ! Quasi-Lagrangian mode to track individual numbered particles 

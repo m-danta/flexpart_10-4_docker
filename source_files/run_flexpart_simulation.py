@@ -48,13 +48,16 @@ def update_COMMAND(source_dir, control_dir, direction, begin_dt, end_dt, out_int
     begin = datetime.datetime.strptime(begin_dt, "%Y%m%d")
     end = datetime.datetime.strptime(end_dt, "%Y%m%d")
 
+    domain_filling = 1 if direction=='forward' else 0
+
     t = string.Template(temp)
     COMMAND = t.substitute(direction=direction,
                            begin_date=begin.strftime("%Y%m%d"),
                            begin_time=begin.strftime("%H%M%S"),
                            end_date=end.strftime("%Y%m%d"),
                            end_time=end.strftime("%H%M%S"),
-                           out_interval='{:.0f}'.format(out_interval))
+                           out_interval='{:.0f}'.format(out_interval),
+                           domian_filling=domain_filling)
 
     with open(control_dir+'COMMAND', 'w') as file:
         file.write(COMMAND)
