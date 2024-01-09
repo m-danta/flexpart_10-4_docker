@@ -147,8 +147,8 @@ else:
 no_of_releases = len(config_file['station']['lon'])
 bboxes = []
 for release in range(no_of_releases):
-    bboxes = bboxes + [{'lon_ll': config_file['station']['lon'][release]-0.1, 'lat_ll': config_file['station']['lat'][release]-0.1, 
-                        'lon_ur': config_file['station']['lon'][release]+0.1, 'lat_ur': config_file['station']['lat'][release]+0.1}]
+    bboxes = bboxes + [{'lon_ll': config_file['station']['lon'][release]-1.5, 'lat_ll': config_file['station']['lat'][release]-1.5, 
+                        'lon_ur': config_file['station']['lon'][release]+1.5, 'lat_ur': config_file['station']['lat'][release]+1.5}]
 #bboxes = [{'lon_ll': config_file['station']['lon'][0]-0.1, 'lat_ll': config_file['station']['lat'][0]-0.1,
 #           'lon_ur': config_file['station']['lon'][0]+0.1, 'lat_ur': config_file['station']['lat'][0]+0.1},
 #          {'lon_ll': config_file['station']['lon'][1]-0.1, 'lat_ll': config_file['station']['lat'][1]-0.1,
@@ -171,8 +171,7 @@ update_RELEASES(source_dir, control_dir,
                 no_part=config_file['release']['no_particles'], 
                 time=time, bboxes=bboxes)
 
-process = subprocess.run('./src/FLEXPART', shell=True, check=True,
-                         stdout=subprocess.PIPE, universal_newlines=True)
+process = subprocess.run('./src/FLEXPART', shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
 print(process.stdout)
 
 #Change output file permissions
